@@ -1,0 +1,5 @@
+% this is the comment!
+define X = "SomeSettings" DEFAULT 
+define Y = 3 _ 
+define Z = _ DEFAULt
+
