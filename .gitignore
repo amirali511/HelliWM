@@ -1,6 +1,8 @@
 # Editor Config
 .editorconfig
-# Config
+
+# Config Header File
 config.h
-# Config
+
+# Config File, WMRC
 wmrc
