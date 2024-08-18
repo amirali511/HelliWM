@@ -5,7 +5,8 @@ HelliWM is a window manager built using c and xcb library, but with better optio
 
 ## Install Dependencies
 The dependencies used in the project are `xcb` and `xcb_cursor` as can be seen in the `meson.build` file.
-You can install `xcb` from [here](https://xcb.freedesktop.org/dist/)
+You can install `xcb` from [here](https://xcb.freedesktop.org/dist/).
+Also `xcb_cursor` can be installed from the libxcb-cursor or xcb-util-cursor.
 
 ## Compile the source code to run
 Execute in the source directory:
