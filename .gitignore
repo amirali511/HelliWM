@@ -6,3 +6,6 @@ config.h
 
 # Config File, WMRC
 wmrc
+
+# Vscode dir
+.vscode
