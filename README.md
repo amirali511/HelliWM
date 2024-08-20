@@ -31,3 +31,6 @@ The first token `define` defines the indentifier word after it or the variable n
 Then any definition mark such as `=` or `:` can be put to continue (any other character or word which does not include a space is also possible).
 Finally specify the value desired to apply and then the default value (also one value at time can be specified meaning that if you don't want to define anything and want to use the default value, `_` can be put for the value and vice versa).
 Lastly comments are defined with the syntax `% This is a comment`.
+
+## Important note on the build file
+Write the complete path for awk parser in the build file instead of the one written by myself, it may be different for you.
