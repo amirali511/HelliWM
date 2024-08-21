@@ -367,7 +367,7 @@ handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, 
 		Launch Dmenu for the launcher: Alt + r
 	*/
 	else if ((event->state & XCB_MOD_MASK_1) && (event->detail == dmenu_keycode)) {
-		runner("kitty");
+		runner("dmenu_run");
 		return;
 	}
 	else if ((event->state & XCB_MOD_MASK_1) && (event->detail == win_dest_keycode)) {
