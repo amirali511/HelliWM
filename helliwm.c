@@ -367,7 +367,7 @@ handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, 
 		Launch Dmenu for the launcher: Alt + r
 	*/
 	else if ((event->state & XCB_MOD_MASK_1) && (event->detail == dmenu_keycode)) {
-		runner("firefox");
+		runner("kitty");
 		return;
 	}
 	else if ((event->state & XCB_MOD_MASK_1) && (event->detail == win_dest_keycode)) {
@@ -382,9 +382,12 @@ handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, 
 static void
 close_focus_window (xcb_connection_t * conn)
 {
-	xcb_query_pointer_cookie_t cookief;
-	cookief = xcb_query_pointer (conn, screen->root);
-	xcb_query_pointer_reply_t * reply = xcb_query_pointer_reply (conn, cookief, &error);
+	/*
+		Finding the focus window
+	*/
+	xcb_get_input_focus_cookie_t cookief;
+	cookief = xcb_get_input_focus (conn);
+	xcb_get_input_focus_reply_t * reply = xcb_get_input_focus_reply (conn, cookief, &error);
 	if (error) {
 		PANIC ("Could not get the input focus", error);
 	}
@@ -392,12 +395,44 @@ close_focus_window (xcb_connection_t * conn)
 		PANIC ("Could not get the input focus", !reply);
 	}
 	
+	xcb_window_t focus = reply->focus;
+	free (reply);
+
 	/*
-		Closing the window by first finding it
+		Atoms
 	*/
-	xcb_window_t focus = reply->child;
-	cookie = xcb_destroy_window (conn, focus);
-	if (xcb_request_check (conn, cookie)) {
-		PANIC ("Could not destroy the window, aborting...\n", xcb_request_check (conn, cookie));
+	xcb_intern_atom_cookie_t protocols_cookie = xcb_intern_atom(conn, 1, 12, "WM_PROTOCOLS");
+    xcb_intern_atom_cookie_t delete_cookie = xcb_intern_atom(conn, 0, 16, "WM_DELETE_WINDOW");
+	xcb_intern_atom_reply_t * protocols_reply = xcb_intern_atom_reply(conn, protocols_cookie, NULL);
+    xcb_intern_atom_reply_t * delete_reply = xcb_intern_atom_reply(conn, delete_cookie, NULL);
+
+	if (!protocols_reply || !delete_reply) {
+		PANIC ("Could not get xcb atoms to work", (!protocols_reply || !delete_reply));
+		free (protocols_reply);
+		free (delete_reply);
 	}
+
+	xcb_client_message_event_t ev = {
+		.response_type = XCB_CLIENT_MESSAGE,
+		.window = focus,
+		.type = protocols_reply->atom,
+		.format = 32,
+		.data.data32 = {
+			delete_reply->atom,
+			XCB_CURRENT_TIME
+		}	
+	};
+
+
+	
+	xcb_send_event (conn, 0, focus,
+					XCB_EVENT_MASK_NO_EVENT,
+					(const char *) &ev);
+	xcb_flush (conn);
+	free (protocols_reply);
+	free (delete_reply);
+	// cookie = xcb_destroy_window (conn, focus);
+	// if (xcb_request_check (conn, cookie)) {
+	// 	 PANIC ("Could not destroy the window, aborting...\n", xcb_request_check (conn, cookie));
+	// }
 }
