@@ -402,9 +402,9 @@ close_focus_window (xcb_connection_t * conn)
 		Atoms
 	*/
 	xcb_intern_atom_cookie_t protocols_cookie = xcb_intern_atom(conn, 1, 12, "WM_PROTOCOLS");
-    xcb_intern_atom_cookie_t delete_cookie = xcb_intern_atom(conn, 0, 16, "WM_DELETE_WINDOW");
+  xcb_intern_atom_cookie_t    delete_cookie = xcb_intern_atom(conn, 0, 16, "WM_DELETE_WINDOW");
 	xcb_intern_atom_reply_t * protocols_reply = xcb_intern_atom_reply(conn, protocols_cookie, NULL);
-    xcb_intern_atom_reply_t * delete_reply = xcb_intern_atom_reply(conn, delete_cookie, NULL);
+  xcb_intern_atom_reply_t *    delete_reply = xcb_intern_atom_reply(conn, delete_cookie, NULL);
 
 	if (!protocols_reply || !delete_reply) {
 		PANIC ("Could not get xcb atoms to work", (!protocols_reply || !delete_reply));
@@ -426,13 +426,9 @@ close_focus_window (xcb_connection_t * conn)
 
 	
 	xcb_send_event (conn, 0, focus,
-					XCB_EVENT_MASK_NO_EVENT,
-					(const char *) &ev);
+									XCB_EVENT_MASK_NO_EVENT,
+									(const char *) &ev);
 	xcb_flush (conn);
 	free (protocols_reply);
 	free (delete_reply);
-	// cookie = xcb_destroy_window (conn, focus);
-	// if (xcb_request_check (conn, cookie)) {
-	// 	 PANIC ("Could not destroy the window, aborting...\n", xcb_request_check (conn, cookie));
-	// }
 }
