@@ -1,8 +1,8 @@
 % this is the comment!
-define mod = XCB_MOD_MASK_4 DEFAULT 
-define bg = 3 _
-define bbg = _ DEFAULT
-define tc = _ DEFAULT
+define MOD = XCB_MOD_MASK_4 DEFAULT 
+define BG = 3 _
+define BBG = _ DEFAULT
+define TC = _ DEFAULT
 define QK = _ DEFAULT
 define LK = _ DEFAULT
 define CK = XK_C DEFAULT
