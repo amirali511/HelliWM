@@ -58,7 +58,7 @@ Always remember to put an empty line on the end of the wmrc file.
 Write the complete path for awk parser yourself in the build file instead of the one written by myself, it may be different for you.
 
 ## WMRC fields
-`mod` : for mod keys like alt or super or ctrl (values are XCB_MOD_MASK_1 or XCB_MOD_MASK_4 or XCB_MOD_MASK_CONTROL).
+`mod` : for mod keys like alt or super or ctrl (values are `XCB_MOD_MASK_1` or `XCB_MOD_MASK_4` or `XCB_MOD_MASK_CONTROL`).
 
 `bg` : background color (values should be in hex).
 
@@ -66,8 +66,8 @@ Write the complete path for awk parser yourself in the build file instead of the
 
 `tc` : text color (values should be in hex).
 
-`QK` : quit key (values can be in the form XK_SOMETHING like XK_Q).
+`QK` : quit key (values can be in the form `XK_SOMETHING` like `XK_Q`).
 
-`LK` : launcher key (values can be in the form XK_SOMETHING like XK_S).
+`LK` : launcher key (values can be in the form `XK_SOMETHING` like `XK_S`).
 
-`CK` : close key (values can be in the form XK_SOMETHING like XK_C).
+`CK` : close key (values can be in the form `XK_SOMETHING` like `XK_C`).
