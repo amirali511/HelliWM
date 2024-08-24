@@ -5,23 +5,23 @@
 #define DEFAULT XCB_NONE
 
 // % this is the comment!
-#ifndef mod
-#define mod XCB_MOD_MASK_4
+#ifndef MOD
+#define MOD XCB_MOD_MASK_4
 #endif
 
 
-#ifndef bg
-#define bg 3
+#ifndef BG
+#define BG 3
 #endif
 
 
-#ifndef bbg
-#define bbg DEFAULT
+#ifndef BBG
+#define BBG DEFAULT
 #endif
 
 
-#ifndef tc
-#define tc DEFAULT
+#ifndef TC
+#define TC DEFAULT
 #endif
 
 
