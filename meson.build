@@ -7,15 +7,10 @@ xcb_keysyms = dependency('xcb-keysyms')
 xcb_cursor = dependency('xcb-cursor')
 X11 = dependency('x11')
 
-parse = custom_target('awk parser',
-                                input: 'wmrc',
-                                output: 'config.h',
-                                command: ['awk', '-f', '/home/amirali/HelliWM/parser.awk', '@INPUT@'],
-                                capture: true)
 
 executable('helliwm',
            'helliwm.c',
            'bar.h',
-           parse,
+           'config.h',
            dependencies : [xcb, xcb_cursor, xcb_keysyms, X11],
            install : true)

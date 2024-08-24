@@ -94,25 +94,25 @@ main (void)
 	/*
 		Xcb keysyms and keycodes setup for exiting and also dmenu_run
 	*/
-	xcb_key_symbols_t * 		 		keysyms = xcb_key_symbols_alloc (connection);
-	xcb_keycode_t 	    	 exit_keycode = xcb_key_symbols_get_keycode(keysyms, XK_Q)[0];
-	xcb_keycode_t 	   		dmenu_keycode = xcb_key_symbols_get_keycode(keysyms, XK_R)[0];
-	xcb_keycode_t 	   win_dest_keycode = xcb_key_symbols_get_keycode(keysyms, XK_C)[0];
+	xcb_key_symbols_t * 		 		keysyms = xcb_key_symbols_alloc 			(connection);
+	xcb_keycode_t 	    	 exit_keycode = xcb_key_symbols_get_keycode (keysyms, XK_Q)[0];
+	xcb_keycode_t 	   		dmenu_keycode = xcb_key_symbols_get_keycode (keysyms, XK_R)[0];
+	xcb_keycode_t 	   win_dest_keycode = xcb_key_symbols_get_keycode (keysyms, XK_C)[0];
 	if (keysyms == NULL || exit_keycode == NULL || dmenu_keycode == NULL || win_dest_keycode == NULL) {
 		PANIC ("Could not get the keysyms or keycodes, aborting...\n", (keysyms == NULL || exit_keycode == 0 || dmenu_keycode == 0 || win_dest_keycode == 0));
 	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_1, exit_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_4, exit_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the exit key, aborting...\n", xcb_request_check (connection, cookie));
 	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_1, dmenu_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_4, dmenu_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the dmenu key, aborting...\n", xcb_request_check (connection, cookie));
 	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_1, win_dest_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_4, win_dest_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the close window key, aborting...\n", xcb_request_check (connection, cookie));
 	}
@@ -132,7 +132,7 @@ main (void)
 	*/
 	uint32_t values[4];
 	values[0] = 0xeb8650;
-	values[1] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS;
+	values[1] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_FOCUS_CHANGE;
 	values[2] = cid;
 	values[3] = XCB_EVENT_MASK_KEY_PRESS;
 	
@@ -212,21 +212,34 @@ main (void)
 		*/
 		if (generic_event != NULL) {
 			switch (generic_event->response_type & ~0x80) {
+				/*
+					Expose events
+				*/
 				case XCB_EXPOSE: {
-				
-					
-
 					break;
 				}
 				/*
 					Keyboard shortcuts handling
 				*/
 				case XCB_KEY_PRESS: {
-					/*
-						Handler code
-					*/
 					xcb_key_press_event_t * key_press_event = (xcb_key_press_event_t *) generic_event;
           handle_key_press_event (connection, key_press_event, exit_keycode, dmenu_keycode, win_dest_keycode);
+					break;
+				}
+				case XCB_ENTER_NOTIFY: {
+					xcb_enter_notify_event_t * enter_notify_event = (xcb_enter_notify_event_t *) generic_event;
+					if (enter_notify_event->event != screenID) {
+						cookie = xcb_configure_window (connection, enter_notify_event->event, XCB_CONFIG_WINDOW_STACK_MODE, (uint32_t []) {XCB_STACK_MODE_ABOVE});
+						if (xcb_request_check (connection, cookie)) {
+							PANIC ("Could not configure the window, aborting...\n", xcb_request_check (connection, cookie));
+						}
+						cookie = xcb_set_input_focus (connection, XCB_INPUT_FOCUS_POINTER_ROOT, enter_notify_event->event, XCB_CURRENT_TIME);
+						if (xcb_request_check (connection, cookie)) {
+							PANIC ("Could not set the input focus, aborting...\n", xcb_request_check (connection, cookie));
+						}
+					}
+					xcb_flush (connection);
+					break;
 				}
 				default: {
 
@@ -359,18 +372,18 @@ handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, 
 	/*
 		Exit the program: Alt + q
 	*/
-  if ((event->state & XCB_MOD_MASK_1) && (event->detail == exit_keycode)) {
+  if ((event->state & XCB_MOD_MASK_4) && (event->detail == exit_keycode)) {
     close_wm ();
     exit(0);
   }
 	/*
 		Launch Dmenu for the launcher: Alt + r
 	*/
-	else if ((event->state & XCB_MOD_MASK_1) && (event->detail == dmenu_keycode)) {
+	else if ((event->state & XCB_MOD_MASK_4) && (event->detail == dmenu_keycode)) {
 		runner("dmenu_run");
 		return;
 	}
-	else if ((event->state & XCB_MOD_MASK_1) && (event->detail == win_dest_keycode)) {
+	else if ((event->state & XCB_MOD_MASK_4) && (event->detail == win_dest_keycode)) {
 		close_focus_window (conn);
 		return;
 	}
