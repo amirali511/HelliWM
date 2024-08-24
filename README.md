@@ -3,11 +3,6 @@
 ## Simple explanation
 HelliWM is a window manager built using c and xcb library, but with better options and better code and being customizable.
 
-## Important note before we continue
-The awk parser is currently unmaintained and it won't work properly, so edit the config.h header file yourself.
-
-You can use the config.h file from the git repo.
-
 ## Install Dependencies
 The dependencies used in the project are `xcb` and `xcb_cursor` as can be seen in the `meson.build` file.
 
@@ -40,8 +35,6 @@ $ sudo ninja -C build uninstall
 ```
 
 ## Guides on the syntax
-(The awk parser is no longer maintained, so this part may not be useful, unless you want to know about wmrc)
-
 The first token `define` defines the indentifier word after it or the variable name.
 
 Then any definition mark such as `=` or `:` can be put to continue (any other character or word which does not include a space is also possible).
@@ -52,13 +45,13 @@ Always the default value is `DEFAULT` if you cannot remember.
 
 Lastly comments are defined with the syntax `% This is a comment`.
 
-Always remember to put an empty line on the end of the wmrc file.
+Always remember to put 2 empty lines on the end of the wmrc file and no empty lines in between.
 
 ## Important note on the build file
 Write the complete path for awk parser yourself in the build file instead of the one written by myself, it may be different for you.
 
 ## WMRC fields
-`mod` : for mod keys like alt or super or ctrl (values are `XCB_MOD_MASK_1` or `XCB_MOD_MASK_4` or `XCB_MOD_MASK_CONTROL`).
+`mod` : for mod keys like alt or super or ctrl (values are XCB_MOD_MASK_1 or XCB_MOD_MASK_4 or XCB_MOD_MASK_CONTROL).
 
 `bg` : background color (values should be in hex).
 
@@ -66,8 +59,8 @@ Write the complete path for awk parser yourself in the build file instead of the
 
 `tc` : text color (values should be in hex).
 
-`QK` : quit key (values can be in the form `XK_SOMETHING` like `XK_Q`).
+`QK` : quit key (values can be in the form XK_SOMETHING like XK_Q).
 
-`LK` : launcher key (values can be in the form `XK_SOMETHING` like `XK_S`).
+`LK` : launcher key (values can be in the form XK_SOMETHING like XK_S).
 
-`CK` : close key (values can be in the form `XK_SOMETHING` like `XK_C`).
+`CK` : close key (values can be in the form XK_SOMETHING like XK_C).
