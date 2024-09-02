@@ -5,12 +5,31 @@ Minimalist and light-weight bar for XCB
 #include <xcb/xproto.h>
 #include <unistd.h>
 #include <time.h>
+#include "config.h"
 
 /* 
 	Panic function 
 */
 #ifndef PANIC
 #define PANIC(msg, cond) if (cond) { perror(msg); assert (!cond); }
+#endif
+
+/*
+  Handling config file vars
+*/
+
+#ifdef BBG
+  #if (BBG == DEFAULT)
+    #undef BBG
+    #define BBG 0x000000
+  #endif
+#endif
+
+#ifdef TC
+  #if (TC == DEFAULT)
+    #undef TC
+    #define TC 0xffffff
+  #endif
 #endif
 
 /*
@@ -56,7 +75,7 @@ create_bar (xcb_connection_t * conn,
     Create the top bar as a separate window
 	*/
   uint32_t values2[1];
-  values2[0] = 0x000000;
+  values2[0] = BBG;
 	uint32_t barID = xcb_generate_id (conn);
 	
   cookie = xcb_create_window (conn,
@@ -115,7 +134,7 @@ static uint32_t write_on_bar (xcb_connection_t * conn,
   if (gcID == -1) {
     PANIC ("Could not create the gc\n", gcID == -1);
   }
-  uint32_t values3[] = {scr.white_pixel, 0x000000, font};
+  uint32_t values3[] = {TC, BBG, font};
       
   cookie = xcb_create_gc (conn, 
                           gcID, 

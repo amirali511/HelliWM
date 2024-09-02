@@ -19,7 +19,6 @@
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
-#include <signal.h>
 #include "bar.h"
 #include "config.h"
 
@@ -28,6 +27,44 @@
 */
 #ifndef PANIC
 #define PANIC(msg, cond) if (cond) { perror(msg); assert (!cond); }
+#endif
+
+/*
+	Using the config file
+*/
+#ifdef BG
+	#if (BG == DEFAULT)
+		#undef BG
+		#define BG 0xeb8650
+	#endif
+#endif
+
+#ifdef MOD
+	#if (MOD == DEFAULT)
+		#undef MOD
+		#define MOD XCB_MOD_MASK_4
+	#endif
+#endif
+
+#ifdef QK
+	#if (QK == DEFAULT)
+		#undef QK
+		#define QK XK_Q
+	#endif
+#endif
+
+#ifdef LK
+	#if (LK == DEFAULT)
+		#undef LK
+		#define LK XK_R
+	#endif
+#endif
+
+#ifdef CK
+	#if (CK == DEFAULT)
+		#undef CK
+		#define CK XK_C
+	#endif
 #endif
 
 /*
@@ -95,24 +132,24 @@ main (void)
 		Xcb keysyms and keycodes setup for exiting and also dmenu_run
 	*/
 	xcb_key_symbols_t * 		 		keysyms = xcb_key_symbols_alloc 			(connection);
-	xcb_keycode_t 	    	 exit_keycode = xcb_key_symbols_get_keycode (keysyms, XK_Q)[0];
-	xcb_keycode_t 	   		dmenu_keycode = xcb_key_symbols_get_keycode (keysyms, XK_R)[0];
-	xcb_keycode_t 	   win_dest_keycode = xcb_key_symbols_get_keycode (keysyms, XK_C)[0];
+	xcb_keycode_t 	    	 exit_keycode = xcb_key_symbols_get_keycode (keysyms, QK)[0];
+	xcb_keycode_t 	   		dmenu_keycode = xcb_key_symbols_get_keycode (keysyms, LK)[0];
+	xcb_keycode_t 	   win_dest_keycode = xcb_key_symbols_get_keycode (keysyms, CK)[0];
 	if (keysyms == NULL || exit_keycode == NULL || dmenu_keycode == NULL || win_dest_keycode == NULL) {
 		PANIC ("Could not get the keysyms or keycodes, aborting...\n", (keysyms == NULL || exit_keycode == 0 || dmenu_keycode == 0 || win_dest_keycode == 0));
 	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_4, exit_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+	cookie = xcb_grab_key(connection, 1, screen->root, MOD, exit_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the exit key, aborting...\n", xcb_request_check (connection, cookie));
 	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_4, dmenu_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+	cookie = xcb_grab_key(connection, 1, screen->root, MOD, dmenu_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the dmenu key, aborting...\n", xcb_request_check (connection, cookie));
 	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, XCB_MOD_MASK_4, win_dest_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+	cookie = xcb_grab_key(connection, 1, screen->root, MOD, win_dest_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the close window key, aborting...\n", xcb_request_check (connection, cookie));
 	}
@@ -131,7 +168,7 @@ main (void)
 		Screen values
 	*/
 	uint32_t values[4];
-	values[0] = 0xeb8650;
+	values[0] = BG;
 	values[1] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_FOCUS_CHANGE;
 	values[2] = cid;
 	values[3] = XCB_EVENT_MASK_KEY_PRESS;
@@ -372,18 +409,21 @@ handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, 
 	/*
 		Exit the program: Alt + q
 	*/
-  if ((event->state & XCB_MOD_MASK_4) && (event->detail == exit_keycode)) {
+  if ((event->state & MOD) && (event->detail == exit_keycode)) {
     close_wm ();
     exit(0);
   }
 	/*
 		Launch Dmenu for the launcher: Alt + r
 	*/
-	else if ((event->state & XCB_MOD_MASK_4) && (event->detail == dmenu_keycode)) {
+	else if ((event->state & MOD) && (event->detail == dmenu_keycode)) {
 		runner("dmenu_run");
 		return;
 	}
-	else if ((event->state & XCB_MOD_MASK_4) && (event->detail == win_dest_keycode)) {
+	/*
+		Close the focus window: Alt + c
+	*/
+	else if ((event->state & MOD) && (event->detail == win_dest_keycode)) {
 		close_focus_window (conn);
 		return;
 	}

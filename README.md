@@ -19,6 +19,7 @@ You can do so by their documentation for installing.
 ## Compile the source code to run
 Execute in the source directory:
 ```bash
+awk -f parser.awk
 meson setup build
 ninja -C build
 cp config.h build/config.h

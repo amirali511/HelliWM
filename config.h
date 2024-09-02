@@ -16,7 +16,7 @@
 
 
 #ifndef BBG
-#define BBG DEFAULT
+#define BBG 0x1A237E
 #endif
 
 
@@ -26,7 +26,7 @@
 
 
 #ifndef QK
-#define QK DEFAULT
+#define QK XK_D
 #endif
 
 
@@ -36,7 +36,7 @@
 
 
 #ifndef CK
-#define CK XK_D
+#define CK XK_Escape
 #endif
 
 
