@@ -19,20 +19,20 @@ You can do so by their documentation for installing.
 ## Compile the source code to run
 Execute in the source directory:
 ```bash
-$ meson setup build
-$ ninja -C build
-$ cp config.h build/config.h
-$ sudo ninja -C build install
+meson setup build
+ninja -C build
+cp config.h build/config.h
+sudo ninja -C build install
 ```
 ## Running
 Run the wm by:
 ```sh
-$ helliwm
+helliwm
 ```
 ## Uninstalling the window manager
 Remove it by:
 ```sh
-$ sudo ninja -C build uninstall
+sudo ninja -C build uninstall
 ```
 
 ## Guides on the syntax
