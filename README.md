@@ -19,9 +19,10 @@ You can do so by their documentation for installing.
 ## Compile the source code to run
 Execute in the source directory:
 ```bash
-$ meson -C <name of the build directory>
-$ ninja -C <name of the build directory>
-$ sudo ninja -C <name of the build directory> install
+$ meson setup build
+$ ninja -C build
+$ cp config.h build/config.h
+$ sudo ninja -C build install
 ```
 ## Running
 Run the wm by:

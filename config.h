@@ -11,7 +11,7 @@
 
 
 #ifndef BG
-#define BG 3
+#define BG 0x32df50
 #endif
 
 
@@ -36,7 +36,7 @@
 
 
 #ifndef CK
-#define CK XK_C
+#define CK XK_D
 #endif
 
 

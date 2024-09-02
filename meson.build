@@ -10,12 +10,13 @@ X11 = dependency('x11')
 parse = custom_target('awk parser',
                       input: 'wmrc',
                       output: 'config.h',
-                      command: ['awk', '-f', '/home/amirali/HelliWM/parser.awk', '@INPUT@'],
+                      command: ['awk', '-f', '../parser.awk', '@INPUT@'],
                       capture: true)
 
 executable('helliwm',
            'helliwm.c',
            'bar.h',
+           'config.h',
            parse,
            dependencies : [xcb, xcb_cursor, xcb_keysyms, X11],
            install : true)
