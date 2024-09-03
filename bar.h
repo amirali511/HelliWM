@@ -122,8 +122,8 @@ static uint32_t write_on_bar (xcb_connection_t * conn,
   }
   cookie = xcb_open_font (conn,
                           font,
-                          sizeof ("-adobe-new century schoolbook-medium-i-normal--0-0-0-0-p-0-iso8859-1"),
-                          "-adobe-new century schoolbook-medium-i-normal--0-0-0-0-p-0-iso8859-1");
+                          sizeof ("6x13"),
+                          "6x13");
   if (xcb_request_check (conn, cookie)) {
     PANIC ("Could not open the font\n", xcb_request_check (conn, cookie));
   }
