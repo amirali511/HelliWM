@@ -1,11 +1,5 @@
 # Editor Config
 .editorconfig
 
-# Config Header File
-config.h
-
-# Config File, WMRC
-wmrc
-
 # Vscode dir
 .vscode
