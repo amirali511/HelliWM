@@ -68,6 +68,12 @@
 #endif
 
 /*
+	String type
+*/
+typedef char * string;
+
+
+/*
 	Global cookie to check for errors, Stem Cell
 */
 xcb_void_cookie_t cookie;
@@ -81,7 +87,7 @@ xcb_generic_error_t * error;
 	First and global variables
 */
 static xcb_connection_t * connection;
-const char * helli_wm_version = "0.2";
+const string helli_wm_version = "0.2";
 static xcb_screen_t * screen;
 
 /*
@@ -103,7 +109,7 @@ typedef uint32_t barID;
 static void 						close_wm ();
 static window_size * 		tile_values (xcb_screen_t * screen, uint32_t * IDs);
 static uint32_t 				create_cursor (xcb_connection_t * conn, xcb_screen_t * screen);
-static void 						runner (char * name);
+static void 						runner (string name);
 static void 						handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, xcb_keycode_t exit_keycode, xcb_keycode_t dmenu_keycode, xcb_keycode_t win_dest_keycode);
 static void 						close_focus_window (xcb_connection_t * conn);
 
@@ -384,7 +390,7 @@ tile_values (xcb_screen_t * screen, uint32_t * IDs)
 	Run a program
 */
 static void
-runner (char * name)
+runner (string name)
 {
 	/*
 		Fork the process and run the program
@@ -480,7 +486,7 @@ close_focus_window (xcb_connection_t * conn)
 	
 	xcb_send_event (conn, 0, focus,
 									XCB_EVENT_MASK_NO_EVENT,
-									(const char *) &ev);
+									(const string) &ev);
 	xcb_flush (conn);
 	free (protocols_reply);
 	free (delete_reply);
