@@ -16,7 +16,6 @@ parse = custom_target('awk parser',
 executable('helliwm',
            'helliwm.c',
            'bar.h',
-           'config.h',
            parse,
            dependencies : [xcb, xcb_cursor, xcb_keysyms, X11],
            install : true)

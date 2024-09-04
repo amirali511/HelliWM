@@ -21,8 +21,8 @@ Execute in the source directory:
 ```bash
 awk -f parser.awk
 meson setup build
-ninja -C build
 cp config.h build/config.h
+ninja -C build
 sudo ninja -C build install
 ```
 ## Running

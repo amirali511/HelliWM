@@ -107,7 +107,7 @@ typedef uint32_t barID;
 	Function prototypes
 */
 static void 						close_wm ();
-static window_size * 		tile_values (xcb_screen_t * screen, uint32_t * IDs);
+static void							tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar);
 static uint32_t 				create_cursor (xcb_connection_t * conn, xcb_screen_t * screen);
 static void 						runner (string name);
 static void 						handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, xcb_keycode_t exit_keycode, xcb_keycode_t dmenu_keycode, xcb_keycode_t win_dest_keycode);
@@ -238,14 +238,18 @@ main (void)
 			Tiling windows with the query tree of windows
 		*/	
 		xcb_query_tree_cookie_t tree_cookie = xcb_query_tree(connection, screen->root);
-		xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply(connection, tree_cookie, NULL);
+		xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply(connection, tree_cookie, &error);
+		
+		if (error) {
+			PANIC ("Could not query the tree, aborting...\n", error);
+		}
 		
 		
 		if (tree_reply) {
     	xcb_window_t * children = xcb_query_tree_children(tree_reply);
     	int num_children = xcb_query_tree_children_length(tree_reply);
 
-			window_size * window_size_list = tile_values (screen, children);
+			// tile_values (connection, screen, children, num_children, screenID, bar);
 
     	free(tree_reply);
 		}
@@ -347,8 +351,8 @@ close_wm ()
 /*
 	Tiling algorithm
 */ 
-static window_size *
-tile_values (xcb_screen_t * screen, uint32_t * IDs)
+static void
+tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar)
 {
     /*
         Screen dimensions
@@ -362,28 +366,26 @@ tile_values (xcb_screen_t * screen, uint32_t * IDs)
 
     /*
         Tile the windows on the screen
-    */
-    int len = sizeof (IDs) / sizeof (uint32_t);
-    window_size * window_size_list = malloc(len * sizeof(window_size));
-    if (!window_size_list) {
-			PANIC ("Memory allocation failed in tile_values", !window_size_list);
-		}
-		/*
 			Dividing the screen into separate halves to tile the windows
 		*/
+		uint32_t values[2];
     for (int iterator = 0; iterator < len; iterator++) {
-        if (iterator % 2 == 0) {
-            screen_width = screen_width / 2;
-            window_size_list[iterator].width = screen_width;
-            window_size_list[iterator].height = screen_height;
-        }
-        else {
-            screen_height = screen_height / 2;
-            window_size_list[iterator].width = screen_width;
-            window_size_list[iterator].height = screen_height;
-        }
+				if (IDs[iterator] != scr && IDs[iterator] != bar) {
+					if (iterator % 2 == 0) {
+							screen_width = screen_width / 2;
+							values[0] = screen_width;
+							values[1] = screen_height;
+							xcb_configure_window (conn, IDs[iterator], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+					}
+					else {
+							screen_height = screen_height / 2;
+							values[0] = screen_width;
+							values[1] = screen_height;
+							xcb_configure_window (conn, IDs[iterator], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+					}
+				}
     }
-    return window_size_list;
+    return;
 }
 
 /*
