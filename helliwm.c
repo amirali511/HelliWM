@@ -293,7 +293,9 @@ main (void)
 							PANIC ("Could not set the input focus, aborting...\n", xcb_request_check (connection, cookie));
 						}
 					}
-					xcb_flush (connection);
+					if (xcb_flush (connection) <= 0) {
+						PANIC ("Could not flush the connection, aborting...\n", xcb_flush (connection) <= 0);
+					}
 					break;
 				}
 				default: {
@@ -334,7 +336,7 @@ create_cursor (xcb_connection_t * conn, xcb_screen_t * screen)
 	*/
 	xcb_cursor_context_t * ctx;
 	if (xcb_cursor_context_new (conn, screen, &ctx)) {
-		PANIC ("Could not create the cursor context\n", !ctx);
+		PANIC ("Could not create the cursor context, aborting...\n", !ctx);
 	}
 	xcb_cursor_t cid = xcb_cursor_load_cursor (ctx, "arrow");
 	return cid;
@@ -350,7 +352,7 @@ close_wm ()
 		xcb_disconnect (connection);
 		exit(0);
 	} else {
-		PANIC ("Could not close the wm, it's already closed\n", !connection);
+		PANIC ("Could not close the wm, it's already closed, aborting...\n", !connection);
 		exit(0);
 	}
 }
@@ -369,7 +371,7 @@ tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int
     screen_height = screen->height_in_pixels;
     screen_width = screen->width_in_pixels;
 		if (screen == NULL) {
-			PANIC ("Screen is null\n", !screen);
+			PANIC ("Screen is null\n, aborting...", !screen);
 		}
 
     /*
@@ -407,11 +409,11 @@ runner (string name)
 	*/
 	pid_t pid = fork ();
 	if (pid == -1) {
-		PANIC ("Could not fork the process\n", pid);
+		PANIC ("Could not fork the process, aborting...\n", pid);
 	}
 	else if (pid == 0) {
 		if (execlp (name, NULL, NULL)) {
-			PANIC ("Could not run the program\n", !execlp (name, NULL, NULL));
+			PANIC ("Could not run the program, aborting...\n", !execlp (name, NULL, NULL));
 		}
 	}
 }
@@ -458,10 +460,10 @@ close_focus_window (xcb_connection_t * conn)
 	cookief = xcb_get_input_focus (conn);
 	xcb_get_input_focus_reply_t * reply = xcb_get_input_focus_reply (conn, cookief, &error);
 	if (error) {
-		PANIC ("Could not get the input focus", error);
+		PANIC ("Could not get the input focus, aborting... \n", error);
 	}
 	if (!reply) {
-		PANIC ("Could not get the input focus", !reply);
+		PANIC ("Could not get the input focus, aborting... \n", !reply);
 	}
 	
 	xcb_window_t focus = reply->focus;
@@ -476,7 +478,7 @@ close_focus_window (xcb_connection_t * conn)
   xcb_intern_atom_reply_t *    delete_reply = xcb_intern_atom_reply(conn, delete_cookie, NULL);
 
 	if (!protocols_reply || !delete_reply) {
-		PANIC ("Could not get xcb atoms to work", (!protocols_reply || !delete_reply));
+		PANIC ("Could not get xcb atoms to work, aborting... \n", (!protocols_reply || !delete_reply));
 		free (protocols_reply);
 		free (delete_reply);
 	}
