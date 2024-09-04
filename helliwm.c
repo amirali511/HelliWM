@@ -258,6 +258,14 @@ main (void)
 			Event check
 		*/
 		if (generic_event != NULL) {
+
+			/*
+				Error events
+			*/
+			if (generic_event->response_type == 0) {
+				PANIC ("Could not get the generic event, aborting...\n", (generic_event->response_type == 0));
+			}
+
 			switch (generic_event->response_type & ~0x80) {
 				/*
 					Expose events
