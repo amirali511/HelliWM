@@ -25,6 +25,8 @@ cp config.h build/config.h
 ninja -C build
 sudo ninja -C build install
 ```
+You can also run the `install.sh` script to install it automatically.
+
 ## Running
 Run the wm by:
 ```sh
