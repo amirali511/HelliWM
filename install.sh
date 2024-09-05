@@ -11,6 +11,7 @@ echo "
   HHH     HHH   EEEEEEEEE   LLLLLLLLL   LLLLLLLLL   III
 ";
 
+cd src;
 awk -f parser.awk;
 meson setup build;
 cp config.h build/config.h;
