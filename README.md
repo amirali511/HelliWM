@@ -68,3 +68,6 @@ Write the complete path for awk parser yourself in the build file instead of the
 `LK` : launcher key (values can be in the form XK_SOMETHING like XK_S).
 
 `CK` : close key (values can be in the form XK_SOMETHING like XK_C).
+
+## Note about dmenu
+You still can use dmenu as a launcher, but it won't be in the correct form and thus, is not recommended.
