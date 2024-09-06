@@ -15,7 +15,7 @@ BEGIN {
 	flag = 1
 
 	while (1) {
-		getline store < "wmrc";
+		getline store < ".wmrc";
 		if (store == EOF){
 			exit
 			break
@@ -93,10 +93,10 @@ BEGIN {
 
 END {
 	if (flag == 1) {
-		print "\n// HelliParse "parser_version" finished parsing wmrc successfully.\n//Check the header files for any possible errors and fix the wmrc file and run this file again if needed.\n"
+		print "\n// HelliParse "parser_version" finished parsing .wmrc successfully.\n//Check the header files for any possible errors and fix the .wmrc file and run this file again if needed.\n"
 	}
 	
 	if (flag == 0) {
-		print "\n// HelliParse "parser_version" finished parsing wmrc with errors, so look above to see the errors"
+		print "\n// HelliParse "parser_version" finished parsing .wmrc with errors, so look above to see the errors"
 	}
 }

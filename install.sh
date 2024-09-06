@@ -12,6 +12,7 @@ echo "
 ";
 
 cd src;
+python3 Generator.py;
 awk -f parser.awk;
 meson setup build;
 cp config.h build/config.h;

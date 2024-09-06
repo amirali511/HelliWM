@@ -21,6 +21,7 @@
 #include <string.h>
 #include "bar.h"
 #include "processed_config.h"
+#include "shortcut.h"
 
 /* 
 	Panic function 
@@ -75,8 +76,7 @@ typedef uint32_t barID;
 static void 						close_wm ();
 static void							tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception);
 static uint32_t 				create_cursor (xcb_connection_t * conn, xcb_screen_t * screen);
-static void 						runner (string name);
-static void 						handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, xcb_keycode_t exit_keycode, xcb_keycode_t dmenu_keycode, xcb_keycode_t win_dest_keycode);
+static void 						run (string name);
 static void 						close_focus_window (xcb_connection_t * conn);
 
 /*
@@ -125,6 +125,8 @@ main (void)
 	if (xcb_request_check (connection, cookie)) {
 		PANIC ("Could not grab the close window key, aborting...\n", xcb_request_check (connection, cookie));
 	}
+
+	HSETUP ();
 	
 	xcb_key_symbols_free(keysyms);
 	/*
@@ -246,7 +248,22 @@ main (void)
 				*/
 				case XCB_KEY_PRESS: {
 					xcb_key_press_event_t * key_press_event = (xcb_key_press_event_t *) generic_event;
-          handle_key_press_event (connection, key_press_event, exit_keycode, dmenu_keycode, win_dest_keycode);
+					
+					if ((key_press_event->state & MOD) && (key_press_event->detail == exit_keycode)) {
+    				close_wm ();
+    				exit(0);
+  				}
+					
+					else if ((key_press_event->state & MOD) && (key_press_event->detail == dmenu_keycode))
+						run ("dmenu_run");
+
+					else if ((key_press_event->state & MOD) && (key_press_event->detail == win_dest_keycode)) {
+						close_focus_window (connection);
+					}
+
+					HHANDLE();
+
+
 					break;
 				}
 				case XCB_ENTER_NOTIFY: {
@@ -370,7 +387,7 @@ tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int
 	Run a program
 */
 static void
-runner (string name)
+run (string name)
 {
 	/*
 		Fork the process and run the program
@@ -383,35 +400,6 @@ runner (string name)
 		if (execlp (name, NULL, NULL)) {
 			PANIC ("Could not run the program, aborting...\n", !execlp (name, NULL, NULL));
 		}
-	}
-}
-
-/*
-	Handle key press events
-*/
-static void
-handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, xcb_keycode_t exit_keycode, xcb_keycode_t dmenu_keycode, xcb_keycode_t win_dest_keycode)
-{
-	/*
-		Exit the program: Alt + q
-	*/
-  if ((event->state & MOD) && (event->detail == exit_keycode)) {
-    close_wm ();
-    exit(0);
-  }
-	/*
-		Launch Dmenu for the launcher: Alt + r
-	*/
-	else if ((event->state & MOD) && (event->detail == dmenu_keycode)) {
-		runner("dmenu_run");
-		return;
-	}
-	/*
-		Close the focus window: Alt + c
-	*/
-	else if ((event->state & MOD) && (event->detail == win_dest_keycode)) {
-		close_focus_window (conn);
-		return;
 	}
 }
 

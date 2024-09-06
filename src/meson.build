@@ -8,7 +8,7 @@ xcb_cursor = dependency('xcb-cursor')
 X11 = dependency('x11')
 
 parse = custom_target('awk parser',
-                      input: 'wmrc',
+                      input: '.wmrc',
                       output: 'config.h',
                       command: ['awk', '-f', '../parser.awk', '@INPUT@'],
                       capture: true)

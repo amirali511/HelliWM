@@ -20,6 +20,7 @@ You can do so by their documentation for installing.
 Execute in the source directory:
 ```bash
 awk -f parser.awk
+python3 Generator.py
 meson setup build
 cp config.h build/config.h
 ninja -C build
@@ -38,7 +39,7 @@ Remove it by:
 sudo ninja -C build uninstall
 ```
 
-## Guides on the syntax
+## Guides on the syntax of .WMRC
 The first token `define` defines the indentifier word after it or the variable name.
 
 Then any definition mark such as `=` or `:` can be put to continue (any other character or word which does not include a space is also possible).
@@ -68,6 +69,10 @@ Write the complete path for awk parser yourself in the build file instead of the
 `LK` : launcher key (values can be in the form XK_SOMETHING like XK_S).
 
 `CK` : close key (values can be in the form XK_SOMETHING like XK_C).
+
+## Guides on the syntax of .SHORTCUT file
+The only point is that you have to write the program names on the first line with spaces and the corresponding shortcuts on the second line with spaces.
+
 
 ## Note about dmenu
 You still can use dmenu as a launcher, but it won't be in the correct form and thus, is not recommended.
