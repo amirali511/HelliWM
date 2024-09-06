@@ -72,6 +72,10 @@
 */
 typedef char * string;
 
+/*
+	Dmenu ID
+*/
+uint32_t dmenu_id;
 
 /*
 	Global cookie to check for errors, Stem Cell
@@ -107,7 +111,7 @@ typedef uint32_t barID;
 	Function prototypes
 */
 static void 						close_wm ();
-static void							tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar);
+static void							tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception);
 static uint32_t 				create_cursor (xcb_connection_t * conn, xcb_screen_t * screen);
 static void 						runner (string name);
 static void 						handle_key_press_event (xcb_connection_t * conn, xcb_key_press_event_t * event, xcb_keycode_t exit_keycode, xcb_keycode_t dmenu_keycode, xcb_keycode_t win_dest_keycode);
@@ -229,6 +233,7 @@ main (void)
 		write_on_bar (connection,
    						 		bar,
    						 		* screen);
+
 		/*
 			Event fetch
 		*/
@@ -239,17 +244,18 @@ main (void)
 		*/	
 		xcb_query_tree_cookie_t tree_cookie = xcb_query_tree(connection, screen->root);
 		xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply(connection, tree_cookie, &error);
-		
+
 		if (error) {
 			PANIC ("Could not query the tree, aborting...\n", error);
 		}
-		
-		
+
+
 		if (tree_reply) {
     	xcb_window_t * children = xcb_query_tree_children(tree_reply);
     	int num_children = xcb_query_tree_children_length(tree_reply);
+			
 
-			// tile_values (connection, screen, children, num_children, screenID, bar);
+			// tile_values (connection, screen, children, num_children, screenID, bar, dmenu_id);
 
     	free(tree_reply);
 		}
@@ -362,7 +368,7 @@ close_wm ()
 	Tiling algorithm
 */ 
 static void
-tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar)
+tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception)
 {
     /*
         Screen dimensions
@@ -380,7 +386,7 @@ tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int
 		*/
 		uint32_t values[2];
     for (int iterator = 0; iterator < len; iterator++) {
-				if (IDs[iterator] != scr && IDs[iterator] != bar) {
+				if (IDs[iterator] != scr && IDs[iterator] != bar && IDs[iterator] != exception) {
 					if (iterator % 2 == 0) {
 							screen_width = screen_width / 2;
 							values[0] = screen_width;

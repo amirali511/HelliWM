@@ -11,12 +11,12 @@
 
 
 #ifndef BG
-#define BG 0x32df50
+#define BG DEFAULT
 #endif
 
 
 #ifndef BBG
-#define BBG 0x1A237E
+#define BBG 0x000000
 #endif
 
 
