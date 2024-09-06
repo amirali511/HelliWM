@@ -1,5 +1,5 @@
 /*
-	HelliWM version 0.2
+	HelliWM version 0.4
 	Created by Amirali Rahmani Vatan Khah
 	https://github.com/amirali511		
 */ 
@@ -53,7 +53,7 @@ xcb_generic_error_t * error;
 	First and global variables
 */
 static xcb_connection_t * connection;
-const string helli_wm_version = "0.2";
+const string helli_wm_version = "0.4";
 static xcb_screen_t * screen;
 
 /*
