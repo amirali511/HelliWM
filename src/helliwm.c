@@ -73,11 +73,11 @@ typedef uint32_t barID;
 /*
 	Function prototypes
 */
-static void 						close_wm ();
-static void							tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception);
-static uint32_t 				create_cursor (xcb_connection_t * conn, xcb_screen_t * screen);
+static void 						hclose_wm ();
+static void							htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception);
+static uint32_t 				hcursor (xcb_connection_t * conn, xcb_screen_t * screen);
 static void 						run (string name);
-static void 						close_focus_window (xcb_connection_t * conn);
+static void 						hclose_focus_window (xcb_connection_t * conn);
 
 /*
 	Main function
@@ -133,7 +133,7 @@ main (void)
 		Cursor and screen setup
 	*/
 	uint32_t 	screenID = xcb_generate_id (connection);
-	uint32_t 		 	 cid = create_cursor (connection, screen);
+	uint32_t 		 	 cid = hcursor (connection, screen);
 	if (screenID == -1 || cid == -1) {
 		PANIC ("Could not create the screen or cursor, aborting...\n", (screenID == 0 || cid == 0));
 	}
@@ -219,7 +219,7 @@ main (void)
     	int num_children = xcb_query_tree_children_length(tree_reply);
 			
 
-			// tile_values (connection, screen, children, num_children, screenID, bar, dmenu_id);
+			// htile (connection, screen, children, num_children, screenID, bar, dmenu_id);
 
     	free(tree_reply);
 		}
@@ -250,7 +250,7 @@ main (void)
 					xcb_key_press_event_t * key_press_event = (xcb_key_press_event_t *) generic_event;
 					
 					if ((key_press_event->state & MOD) && (key_press_event->detail == exit_keycode)) {
-    				close_wm ();
+    				hclose_wm ();
     				exit(0);
   				}
 					
@@ -258,7 +258,7 @@ main (void)
 						run ("dmenu_run");
 
 					else if ((key_press_event->state & MOD) && (key_press_event->detail == win_dest_keycode)) {
-						close_focus_window (connection);
+						hclose_focus_window (connection);
 					}
 
 					HHANDLE();
@@ -267,12 +267,25 @@ main (void)
 					break;
 				}
 				case XCB_ENTER_NOTIFY: {
+
+					/*
+						Focus handling
+					*/
+
 					xcb_enter_notify_event_t * enter_notify_event = (xcb_enter_notify_event_t *) generic_event;
 					if (enter_notify_event->event != screenID) {
+						/*
+							Move the window on top of the window stack
+						*/
+
 						cookie = xcb_configure_window (connection, enter_notify_event->event, XCB_CONFIG_WINDOW_STACK_MODE, (uint32_t []) {XCB_STACK_MODE_ABOVE});
 						if (xcb_request_check (connection, cookie)) {
 							PANIC ("Could not configure the window, aborting...\n", xcb_request_check (connection, cookie));
 						}
+
+						/*
+							Change input focus
+						*/
 						cookie = xcb_set_input_focus (connection, XCB_INPUT_FOCUS_POINTER_ROOT, enter_notify_event->event, XCB_CURRENT_TIME);
 						if (xcb_request_check (connection, cookie)) {
 							PANIC ("Could not set the input focus, aborting...\n", xcb_request_check (connection, cookie));
@@ -284,7 +297,6 @@ main (void)
 					break;
 				}
 				default: {
-
 					break;
 				}
 			}
@@ -305,7 +317,7 @@ main (void)
 		PANIC ("Could not free the cursor, aborting...\n", xcb_request_check (connection, cookie));
 	}
 	
-	close_wm ();
+	hclose_wm ();
 	return EXIT_SUCCESS;
 }
 
@@ -314,7 +326,7 @@ main (void)
 	Cursor maker
 */
 static uint32_t
-create_cursor (xcb_connection_t * conn, xcb_screen_t * screen)
+hcursor (xcb_connection_t * conn, xcb_screen_t * screen)
 {
 	/*
 		Create the cursor context and load the cursor
@@ -331,7 +343,7 @@ create_cursor (xcb_connection_t * conn, xcb_screen_t * screen)
 	Close the WM
 */
 static void
-close_wm ()
+hclose_wm ()
 {
 	if (connection != NULL) {
 		xcb_disconnect (connection);
@@ -347,7 +359,7 @@ close_wm ()
 	Tiling algorithm
 */ 
 static void
-tile_values (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception)
+htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception)
 {
     /*
         Screen dimensions
@@ -407,7 +419,7 @@ run (string name)
 	Closing the focus window
 */
 static void
-close_focus_window (xcb_connection_t * conn)
+hclose_focus_window (xcb_connection_t * conn)
 {
 	/*
 		Finding the focus window

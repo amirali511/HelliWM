@@ -4,6 +4,8 @@ contents = []
 word = ""
 line = []
 
+
+# Opening the input file and reading the contents
 with open(".shortcut", 'r') as file:
     chars = file.read()
     for char in chars:
@@ -23,6 +25,7 @@ with open(".shortcut", 'r') as file:
     if line:
         contents.append(line)
 
+# Writing it out
 with open("shortcut.h", "w") as output:
     output.write("#define HSETUP()\\\n")
     for i in contents[0][0:-1]:
