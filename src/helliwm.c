@@ -7,68 +7,8 @@
 /*
 	Includes
 */ 
-#include <xcb/xcb.h>
-#include <xcb/xproto.h>
-#include <xcb/xcb_cursor.h>
-#include <xcb/xcb_keysyms.h>
-#include <X11/keysym.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <time.h>
-#include <string.h>
+#include "def.h"
 #include "bar.h"
-#include "processed_config.h"
-#include "shortcut.h"
-
-/* 
-	Panic function 
-*/
-#ifndef PANIC
-#define PANIC(msg, cond) if (cond) { perror(msg); assert (!cond); }
-#endif
-
-/*
-	String type
-*/
-typedef char * string;
-
-/*
-	Dmenu ID
-*/
-uint32_t dmenu_id;
-
-/*
-	Global cookie to check for errors, Stem Cell
-*/
-xcb_void_cookie_t cookie;
-
-/*
-	Global generic error, Stem Cell
-*/
-xcb_generic_error_t * error;
-
-/*
-	First and global variables
-*/
-static xcb_connection_t * connection;
-const string helli_wm_version = "0.4";
-static xcb_screen_t * screen;
-
-/*
-	Window size struct
-*/
-typedef struct window_size {
-	uint32_t width;
-	uint32_t height;
-} window_size;
-
-/*
-	Bar ID type
-*/
-typedef uint32_t barID;
 
 /*
 	Function prototypes
@@ -78,6 +18,8 @@ static void							htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_
 static uint32_t 				hcursor (xcb_connection_t * conn, xcb_screen_t * screen);
 static void 						run (string name);
 static void 						hclose_focus_window (xcb_connection_t * conn);
+
+const string helli_wm_version = "0.4";
 
 /*
 	Main function

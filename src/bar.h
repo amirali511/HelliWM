@@ -1,46 +1,7 @@
 /*
 Minimalist and light-weight bar for XCB
 */
-#include <xcb/xcb.h>
-#include <xcb/xproto.h>
-#include <unistd.h>
-#include <time.h>
-#include "config.h"
-
-/* 
-	Panic function 
-*/
-#ifndef PANIC
-#define PANIC(msg, cond) if (cond) { perror(msg); assert (!cond); }
-#endif
-
-/*
-  Handling config file vars
-*/
-
-#ifdef BBG
-  #if (BBG == DEFAULT)
-    #undef BBG
-    #define BBG 0x000000
-  #endif
-#endif
-
-#ifdef TC
-  #if (TC == DEFAULT)
-    #undef TC
-    #define TC 0xffffff
-  #endif
-#endif
-
-/*
-  String type
-*/
-typedef char * string;
-
-/*
-  Global cookie to check for errors, Stem Cell
-*/
-xcb_void_cookie_t cookie;
+#include "def.h"
 
 /*
   Now
