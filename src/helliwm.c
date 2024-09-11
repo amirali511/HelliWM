@@ -8,7 +8,7 @@
 	Includes
 */ 
 #include "def.h"
-#include "bar.h"
+#include "panels.h"
 
 /*
 	Function prototypes
