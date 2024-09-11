@@ -2,6 +2,7 @@
 define MOD = XCB_MOD_MASK_4 DEFAULT 
 define BG = _ DEFAULT
 define BBG = 0x282828 _
+define TBG = 0x282828 _
 define TC = _ DEFAULT
 define QK = XK_D DEFAULT
 define LK = _ DEFAULT

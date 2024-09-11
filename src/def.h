@@ -46,3 +46,8 @@ static xcb_screen_t * screen;
 	Bar ID type
 */
 typedef uint32_t barID;
+
+/*
+	Task window ID type
+*/
+typedef uint32_t taskID;

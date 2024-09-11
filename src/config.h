@@ -20,6 +20,11 @@
 #endif
 
 
+#ifndef TBG
+#define TBG 0x282828
+#endif
+
+
 #ifndef TC
 #define TC DEFAULT
 #endif

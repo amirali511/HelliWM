@@ -122,6 +122,9 @@ main (void)
 													* screen,
 													screenID);
 
+	taskID task = create_task_window (connection,
+																		* screen,
+																		screenID);
 
 	/*
 		Generic event or the Stem Cell
@@ -334,13 +337,21 @@ htile (xcb_connection_t * conn,
 							screen_width = screen_width / 2;
 							values[0] = screen_width;
 							values[1] = screen_height;
-							xcb_configure_window (conn, IDs[iterator], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+
+							xcb_configure_window (conn, 
+																		IDs[iterator], 
+																		XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, 
+																		values);
 					}
 					else {
 							screen_height = screen_height / 2;
 							values[0] = screen_width;
 							values[1] = screen_height;
-							xcb_configure_window (conn, IDs[iterator], XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+							
+							xcb_configure_window (conn, 
+																		IDs[iterator], 
+																		XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, 
+																		values);
 					}
 				}
     }

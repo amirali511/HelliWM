@@ -70,6 +70,8 @@ Write the complete path for awk parser yourself in the build file instead of the
 
 `CK` : close key (values can be in the form XK_SOMETHING like XK_C).
 
+`TBG` : Taskbar background color (values should be in hex).
+
 ## Guides on the syntax of .SHORTCUT file
 The only point is that you have to write the program names on the first line with spaces and the corresponding shortcuts on the second line with spaces.
 

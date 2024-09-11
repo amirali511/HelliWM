@@ -51,3 +51,10 @@
     #define TC 0xffffff
   #endif
 #endif
+
+#ifdef TBG
+	#if (TBG == DEFAULT)
+		#undef TBG
+		#define TBG 0x000000
+	#endif
+#endif
