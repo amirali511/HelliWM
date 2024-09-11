@@ -25,6 +25,42 @@ now ()
 }
 
 /*
+  Battery status
+*/
+static string
+battery ()
+{
+  FILE * fp;
+  char buff[10];
+  static char result[4];
+  int percentage;
+  fp = fopen ("/sys/class/power_supply/BAT0/capacity", "r");
+  if (fp == NULL) {
+    PANIC ("File is null, aborting...\n", fp == NULL);
+  }
+
+  if (fgets (buff, sizeof(buff), fp) != NULL) {
+    int percentage = strtol (buff, NULL, 10);
+    
+    if (percentage == 100) {
+      sprintf (result, "%d", percentage);
+      strcat (result, "%");
+    } else {
+      sprintf (result, "%d", percentage);
+      strcat (result, "% ");
+    }
+  } else {
+    PANIC ("Could not extract to the buffer, aborting...\n", 1 == 1);
+  }
+  
+  if (fclose (fp) != 0) {
+    PANIC ("Could not close the file, aborting...\n", 0 == 0);
+  }
+
+  return result;
+}
+
+/*
   Creating the bar
 */
 static uint32_t 
@@ -43,8 +79,8 @@ create_bar (xcb_connection_t * conn,
                               XCB_COPY_FROM_PARENT,
                               barID,
                               scrID,
-                              0, scr.height_in_pixels - 30,
-                              scr.width_in_pixels, 30,
+                              0, 0,
+                              scr.width_in_pixels, 20,
                               0,
                               XCB_WINDOW_CLASS_INPUT_OUTPUT,
                               scr.root_visual,
@@ -83,8 +119,8 @@ static uint32_t write_on_bar (xcb_connection_t * conn,
   }
   cookie = xcb_open_font (conn,
                           font,
-                          sizeof ("6x13"),
-                          "6x13");
+                          sizeof ("9x15"),
+                          "9x15");
   if (xcb_request_check (conn, cookie)) {
     PANIC ("Could not open the font\n", xcb_request_check (conn, cookie));
   }
@@ -112,7 +148,7 @@ static uint32_t write_on_bar (xcb_connection_t * conn,
                              5,
                              barID,
                              gcID,
-                             scr.width_in_pixels / 2 - 20, 20,
+                             scr.width_in_pixels / 2 - 20, 15,
                              now ());
   if (xcb_request_check (conn, cookie)) {
     PANIC ("Could not write on the bar\n", xcb_request_check (conn, cookie));
@@ -121,8 +157,18 @@ static uint32_t write_on_bar (xcb_connection_t * conn,
                              sizeof (getlogin ()) - 1,
                              barID,
                              gcID,
-                             10, 20,
+                             10, 15,
                              getlogin ());
+  if (xcb_request_check (conn, cookie)) {
+    PANIC ("Could not write on the bar\n", xcb_request_check (conn, cookie));
+  }
+
+  cookie = xcb_image_text_8 (conn,
+                             sizeof (battery ()) - 1,
+                             barID,
+                             gcID,
+                             scr.width_in_pixels - 35, 15,
+                             battery ());
   if (xcb_request_check (conn, cookie)) {
     PANIC ("Could not write on the bar\n", xcb_request_check (conn, cookie));
   }

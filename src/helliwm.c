@@ -14,7 +14,7 @@
 	Function prototypes
 */
 static void 						hclose_wm ();
-static void							htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception);
+static void							htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar);
 static uint32_t 				hcursor (xcb_connection_t * conn, xcb_screen_t * screen);
 static void 						run (string name);
 static void 						hclose_focus_window (xcb_connection_t * conn);
@@ -148,8 +148,12 @@ main (void)
 		/*
 			Tiling windows with the query tree of windows
 		*/	
-		xcb_query_tree_cookie_t tree_cookie = xcb_query_tree(connection, screen->root);
-		xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply(connection, tree_cookie, &error);
+		xcb_query_tree_cookie_t tree_cookie = xcb_query_tree(connection, 
+																												 screen->root);
+																												 
+		xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply(connection, 
+																															 tree_cookie, 
+																															 &error);
 
 		if (error) {
 			PANIC ("Could not query the tree, aborting...\n", error);
@@ -268,7 +272,8 @@ main (void)
 	Cursor maker
 */
 static uint32_t
-hcursor (xcb_connection_t * conn, xcb_screen_t * screen)
+hcursor (xcb_connection_t * conn,
+				 xcb_screen_t * screen)
 {
 	/*
 		Create the cursor context and load the cursor
@@ -301,7 +306,12 @@ hclose_wm ()
 	Tiling algorithm
 */ 
 static void
-htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar, xcb_window_t exception)
+htile (xcb_connection_t * conn,
+			 xcb_screen_t * screen,
+			 uint32_t * IDs,
+			 int len, 
+			 uint32_t scr, 
+			 uint32_t bar)
 {
     /*
         Screen dimensions
@@ -319,7 +329,7 @@ htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, 
 		*/
 		uint32_t values[2];
     for (int iterator = 0; iterator < len; iterator++) {
-				if (IDs[iterator] != scr && IDs[iterator] != bar && IDs[iterator] != exception) {
+				if (IDs[iterator] != scr && IDs[iterator] != bar) {
 					if (iterator % 2 == 0) {
 							screen_width = screen_width / 2;
 							values[0] = screen_width;

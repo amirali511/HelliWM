@@ -16,7 +16,7 @@
 
 
 #ifndef BBG
-#define BBG 0x000000
+#define BBG 0x282828
 #endif
 
 
