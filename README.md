@@ -1,5 +1,7 @@
 # Documentation for HelliWM
 
+![](HelliWM.png)
+
 ## Simple explanation
 HelliWM is a window manager built using c and xcb library, but with better options and better code and being customizable. It is built by me, Amirali Rahmani Vatan Khah, a fourteen year old boy. Hope you enjoy!
 
