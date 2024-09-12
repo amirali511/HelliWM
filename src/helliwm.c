@@ -32,15 +32,17 @@ main (void)
 	*/
 	int screen_number;
 	connection = xcb_connect (NULL, &screen_number);
-	if (xcb_connection_has_error (connection)) {
+	
+	if (xcb_connection_has_error (connection)) 
 		PANIC ("Could not connect to x server, aborting...\n", xcb_connection_has_error (connection));
-	}
-	const xcb_setup_t * 				        setup = xcb_get_setup (connection);
-	xcb_screen_iterator_t 	  screen_iterator = xcb_setup_roots_iterator (setup);
-	xcb_screen_t * 				   	   			 screen = screen_iterator.data;
-	if (setup == NULL || screen == NULL || &screen_iterator == NULL) {
+	
+	const xcb_setup_t * 			        setup = xcb_get_setup (connection);
+	xcb_screen_iterator_t 	screen_iterator = xcb_setup_roots_iterator (setup);
+	xcb_screen_t * 			   	   			 screen = screen_iterator.data;
+	
+	if (setup == NULL || screen == NULL || &screen_iterator == NULL)
 		PANIC ("Could not get the screen, aborting...\n", (setup == NULL || screen == NULL));
-	}
+
 
 	/*
 		Xcb keysyms and keycodes setup for exiting and also dmenu_run
@@ -49,24 +51,41 @@ main (void)
 	xcb_keycode_t 	    	 exit_keycode = xcb_key_symbols_get_keycode (keysyms, QK)[0];
 	xcb_keycode_t 	   		dmenu_keycode = xcb_key_symbols_get_keycode (keysyms, LK)[0];
 	xcb_keycode_t 	   win_dest_keycode = xcb_key_symbols_get_keycode (keysyms, CK)[0];
-	if (keysyms == NULL || exit_keycode == NULL || dmenu_keycode == NULL || win_dest_keycode == NULL) {
+	if (keysyms == NULL || exit_keycode == NULL || dmenu_keycode == NULL || win_dest_keycode == NULL) 
 		PANIC ("Could not get the keysyms or keycodes, aborting...\n", (keysyms == NULL || exit_keycode == 0 || dmenu_keycode == 0 || win_dest_keycode == 0));
-	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, MOD, exit_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
-	if (xcb_request_check (connection, cookie)) {
+
+	cookie = xcb_grab_key(connection, 
+												1, 
+												screen->root, 
+												MOD, 
+												exit_keycode, 
+												XCB_GRAB_MODE_ASYNC, 
+												XCB_GRAB_MODE_ASYNC);
+	if (xcb_request_check (connection, cookie))
 		PANIC ("Could not grab the exit key, aborting...\n", xcb_request_check (connection, cookie));
-	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, MOD, dmenu_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
-	if (xcb_request_check (connection, cookie)) {
+
+	cookie = xcb_grab_key(connection, 
+												1, 
+												screen->root, 
+												MOD, 
+												dmenu_keycode, 
+												XCB_GRAB_MODE_ASYNC, 
+												XCB_GRAB_MODE_ASYNC);
+	if (xcb_request_check (connection, cookie))
 		PANIC ("Could not grab the dmenu key, aborting...\n", xcb_request_check (connection, cookie));
-	}
 
-	cookie = xcb_grab_key(connection, 1, screen->root, MOD, win_dest_keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
-	if (xcb_request_check (connection, cookie)) {
+
+	cookie = xcb_grab_key(connection, 
+												1, 
+												screen->root, 
+												MOD, 
+												win_dest_keycode, 
+												XCB_GRAB_MODE_ASYNC, 
+												XCB_GRAB_MODE_ASYNC);
+	if (xcb_request_check (connection, cookie))
 		PANIC ("Could not grab the close window key, aborting...\n", xcb_request_check (connection, cookie));
-	}
 
 	HSETUP ();
 	
@@ -76,16 +95,18 @@ main (void)
 	*/
 	uint32_t 	screenID = xcb_generate_id (connection);
 	uint32_t 		 	 cid = hcursor (connection, screen);
-	if (screenID == -1 || cid == -1) {
+	if (screenID == -1 || cid == -1)
 		PANIC ("Could not create the screen or cursor, aborting...\n", (screenID == 0 || cid == 0));
-	}
 	
 	/*
 		Screen values
 	*/
 	uint32_t values[4];
 	values[0] = BG;
-	values[1] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_FOCUS_CHANGE;
+	values[1] = XCB_EVENT_MASK_EXPOSURE | 
+							XCB_EVENT_MASK_BUTTON_PRESS | 
+							XCB_EVENT_MASK_ENTER_WINDOW | 
+							XCB_EVENT_MASK_FOCUS_CHANGE;
 	values[2] = cid;
 	values[3] = XCB_EVENT_MASK_KEY_PRESS;
 	
@@ -101,19 +122,22 @@ main (void)
 															0,
 															XCB_WINDOW_CLASS_INPUT_OUTPUT,
 															screen->root_visual,
-															XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK | XCB_CW_CURSOR | XCB_CW_EVENT_MASK, values);
-	if (xcb_request_check (connection, cookie)) {
+															XCB_CW_BACK_PIXEL | 
+															XCB_CW_EVENT_MASK | 
+															XCB_CW_CURSOR | 
+															XCB_CW_EVENT_MASK, 
+															values);
+	
+	if (xcb_request_check (connection, cookie))
 		PANIC ("Could not create the screen, aborting...\n", xcb_request_check (connection, cookie));
-	}					
+					
 	
 	cookie = xcb_map_window (connection, screenID);
-  if (xcb_request_check (connection, cookie)) {
+  if (xcb_request_check (connection, cookie))
 		PANIC ("Could not map the screen, aborting...\n", xcb_request_check (connection, cookie));
-	}
 	
-	if (xcb_flush (connection) <= 0) {
+	if (xcb_flush (connection) <= 0)
 		PANIC ("Could not flush the connection, aborting...\n", (xcb_flush (connection) <= 0));
-	}
 	
 	/*
 		Creating the bar with the bar module
@@ -156,24 +180,30 @@ main (void)
 		/*
 			Tiling windows with the query tree of windows
 		*/	
-		xcb_query_tree_cookie_t tree_cookie = xcb_query_tree(connection, 
-																												 screen->root);
+		xcb_query_tree_cookie_t 
+		tree_cookie = xcb_query_tree(connection, 
+	 															screen->root);
 																												 
-		xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply(connection, 
-																															 tree_cookie, 
-																															 &error);
+		xcb_query_tree_reply_t * 
+		tree_reply = xcb_query_tree_reply(connection, 
+																			tree_cookie, 
+																			&error);
 
-		if (error) {
+		if (error)
 			PANIC ("Could not query the tree, aborting...\n", error);
-		}
-
 
 		if (tree_reply) {
     	xcb_window_t * children = xcb_query_tree_children(tree_reply);
     	int num_children = xcb_query_tree_children_length(tree_reply);
 			
 
-			// htile (connection, screen, children, num_children, screenID, bar, dmenu_id);
+			// htile (connection, 
+			//				screen, 
+			//				children, 
+			// 				num_children, 
+			//				screenID, 
+			//				bar, 
+			//				dmenu_id);
 
     	free(tree_reply);
 		}
@@ -186,9 +216,8 @@ main (void)
 			/*
 				Error events
 			*/
-			if (generic_event->response_type == 0) {
+			if (generic_event->response_type == 0)
 				PANIC ("Could not get the generic event, aborting...\n", (generic_event->response_type == 0));
-			}
 
 			switch (generic_event->response_type & ~0x80) {
 				/*
@@ -211,9 +240,8 @@ main (void)
 					else if ((key_press_event->state & MOD) && (key_press_event->detail == dmenu_keycode))
 						run ("dmenu_run");
 
-					else if ((key_press_event->state & MOD) && (key_press_event->detail == win_dest_keycode)) {
+					else if ((key_press_event->state & MOD) && (key_press_event->detail == win_dest_keycode))
 						hclose_focus_window (connection);
-					}
 
 					HHANDLE();
 
@@ -232,22 +260,28 @@ main (void)
 							Move the window on top of the window stack
 						*/
 
-						cookie = xcb_configure_window (connection, enter_notify_event->event, XCB_CONFIG_WINDOW_STACK_MODE, (uint32_t []) {XCB_STACK_MODE_ABOVE});
-						if (xcb_request_check (connection, cookie)) {
+						cookie = xcb_configure_window (connection, 
+																					 enter_notify_event->event, 
+																					 XCB_CONFIG_WINDOW_STACK_MODE, 
+																					 (uint32_t []) {XCB_STACK_MODE_ABOVE});
+						if (xcb_request_check (connection, cookie))
 							PANIC ("Could not configure the window, aborting...\n", xcb_request_check (connection, cookie));
-						}
+
 
 						/*
 							Change input focus
 						*/
-						cookie = xcb_set_input_focus (connection, XCB_INPUT_FOCUS_POINTER_ROOT, enter_notify_event->event, XCB_CURRENT_TIME);
-						if (xcb_request_check (connection, cookie)) {
+						cookie = xcb_set_input_focus (connection, 
+																					XCB_INPUT_FOCUS_POINTER_ROOT, 
+																					enter_notify_event->event, 
+																					XCB_CURRENT_TIME);
+						
+						if (xcb_request_check (connection, cookie))
 							PANIC ("Could not set the input focus, aborting...\n", xcb_request_check (connection, cookie));
-						}
+						
 					}
-					if (xcb_flush (connection) <= 0) {
+					if (xcb_flush (connection) <= 0)
 						PANIC ("Could not flush the connection, aborting...\n", xcb_flush (connection) <= 0);
-					}
 					break;
 				}
 				default: {
@@ -267,9 +301,8 @@ main (void)
 		End the program
 	*/
 	cookie = xcb_free_cursor (connection, cid);
-	if (xcb_request_check (connection, cookie)) {
+	if (xcb_request_check (connection, cookie))
 		PANIC ("Could not free the cursor, aborting...\n", xcb_request_check (connection, cookie));
-	}
 	
 	hclose_wm ();
 	return EXIT_SUCCESS;
@@ -287,9 +320,9 @@ hcursor (xcb_connection_t * conn,
 		Create the cursor context and load the cursor
 	*/
 	xcb_cursor_context_t * ctx;
-	if (xcb_cursor_context_new (conn, screen, &ctx)) {
+	if (xcb_cursor_context_new (conn, screen, &ctx))
 		PANIC ("Could not create the cursor context, aborting...\n", !ctx);
-	}
+	
 	xcb_cursor_t cid = xcb_cursor_load_cursor (ctx, "arrow");
 	return cid;
 }
@@ -327,9 +360,9 @@ htile (xcb_connection_t * conn,
     int screen_height, screen_width;
     screen_height = screen->height_in_pixels;
     screen_width = screen->width_in_pixels;
-		if (screen == NULL) {
+		
+		if (screen == NULL)
 			PANIC ("Screen is null\n, aborting...", !screen);
-		}
 
     /*
         Tile the windows on the screen
@@ -347,8 +380,7 @@ htile (xcb_connection_t * conn,
 																		IDs[iterator], 
 																		XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, 
 																		values);
-					}
-					else {
+					} else {
 							screen_height = screen_height / 2;
 							values[0] = screen_width;
 							values[1] = screen_height;
@@ -375,11 +407,9 @@ run (string name)
 	pid_t pid = fork ();
 	if (pid == -1) {
 		PANIC ("Could not fork the process, aborting...\n", pid);
-	}
-	else if (pid == 0) {
-		if (execlp (name, NULL, NULL)) {
-			PANIC ("Could not run the program, aborting...\n", !execlp (name, NULL, NULL));
-		}
+	} else if (pid == 0) {
+			if (execlp (name, NULL, NULL))
+				PANIC ("Could not run the program, aborting...\n", !execlp (name, NULL, NULL));
 	}
 }
 
@@ -394,13 +424,17 @@ hclose_focus_window (xcb_connection_t * conn)
 	*/
 	xcb_get_input_focus_cookie_t cookief;
 	cookief = xcb_get_input_focus (conn);
-	xcb_get_input_focus_reply_t * reply = xcb_get_input_focus_reply (conn, cookief, &error);
-	if (error) {
+	
+	xcb_get_input_focus_reply_t * 
+	reply = xcb_get_input_focus_reply (conn, 
+																		 cookief, 
+																		 &error);
+	if (error)
 		PANIC ("Could not get the input focus, aborting... \n", error);
-	}
-	if (!reply) {
+
+	if (!reply)
 		PANIC ("Could not get the input focus, aborting... \n", !reply);
-	}
+
 	
 	xcb_window_t focus = reply->focus;
 	free (reply);

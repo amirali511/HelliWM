@@ -126,9 +126,10 @@ create_bar (xcb_connection_t * conn,
 /*
   Writing the current user's name and the time on the bar
 */
-static uint32_t write_on_bar (xcb_connection_t * conn,
-                              uint32_t           barID,
-                              xcb_screen_t       scr)
+static void 
+write_on_bar (xcb_connection_t * conn,
+              uint32_t           barID,
+              xcb_screen_t       scr)
 {
   /*
     Font object
@@ -199,7 +200,7 @@ static uint32_t write_on_bar (xcb_connection_t * conn,
   if (xcb_flush (conn) <= 0) 
     PANIC ("Could not flush the connection, aborting...\n", xcb_flush (conn) <= 0);
 
-  return font;   
+  return;   
 }
 
 static uint32_t
@@ -377,4 +378,5 @@ write_on_task_window (xcb_connection_t * conn,
   }
   if (xcb_flush (conn) <= 0) 
     PANIC ("Could not flush the connection, aborting...\n", xcb_flush (conn) <= 0);
+
 }
