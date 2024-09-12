@@ -5,6 +5,7 @@ project('helliwm', 'c',
 xcb = dependency('xcb')
 xcb_keysyms = dependency('xcb-keysyms')
 xcb_cursor = dependency('xcb-cursor')
+xcb_image = dependency('xcb-image')
 X11 = dependency('x11')
 
 parse = custom_target('awk parser',
@@ -17,5 +18,5 @@ executable('helliwm',
            'helliwm.c',
            'panels.h',
            parse,
-           dependencies : [xcb, xcb_cursor, xcb_keysyms, X11],
+           dependencies : [xcb, xcb_cursor, xcb_keysyms, xcb_image, X11],
            install : true)

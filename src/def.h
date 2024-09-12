@@ -6,6 +6,7 @@
 #include <xcb/xproto.h>
 #include <xcb/xcb_cursor.h>
 #include <xcb/xcb_keysyms.h>
+#include <xcb/xcb_image.h>
 #include <X11/keysym.h>
 #include <stdio.h>
 #include <stdlib.h>

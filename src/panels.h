@@ -237,3 +237,124 @@ create_task_window (xcb_connection_t * conn,
 
   return taskID;
 }
+
+static void
+write_on_task_window (xcb_connection_t * conn,
+                      uint32_t scrID,
+                      xcb_screen_t scr,
+                      uint32_t taskID)
+{
+  xcb_intern_atom_cookie_t icon_cookie = xcb_intern_atom (conn, 0, sizeof ("_NET_WM_ICON"), "_NET_WM_ICON");
+  xcb_intern_atom_reply_t * icon_reply = xcb_intern_atom_reply (conn, icon_cookie, &error);
+  if (error) {
+    PANIC ("Could not get the icon atom, aborting...\n", error);
+  }
+  xcb_atom_t XCB_ATOM_WM_ICON = icon_reply->atom;
+  free (icon_reply);
+
+  xcb_query_tree_cookie_t tree_cookie = xcb_query_tree (conn, scr.root);
+  xcb_query_tree_reply_t * tree_reply = xcb_query_tree_reply (conn, tree_cookie, &error);
+  
+  if (error) {
+    PANIC ("Could not get the list of windows, aborting...\n", error);
+  }
+  if (tree_reply) {
+    xcb_window_t * children = xcb_query_tree_children (tree_reply);
+    int num_children = xcb_query_tree_children_length(tree_reply) - 3;
+    int x_offset = 5;
+    for (int i = 0; i < num_children; i++) {
+      xcb_get_property_cookie_t property_cookie = xcb_get_property (conn,
+                                                                    0,
+                                                                    children[i],
+                                                                    XCB_ATOM_WM_ICON,
+                                                                    XCB_ATOM_CARDINAL,
+                                                                    0,
+                                                                    UINT32_MAX);
+
+      xcb_get_property_reply_t * property_reply = xcb_get_property_reply (conn,
+                                                                          property_cookie,
+                                                                          &error);
+      if (error) {
+        PANIC ("Could not get the property of windows, aborting...\n", error);
+      }  
+
+      if (property_reply && xcb_get_property_value_length (property_reply) > 0) {
+        
+        uint32_t * data = xcb_get_property_value (property_reply);
+        // int width, height = data[0], data[1];
+        int pixmapID = xcb_generate_id (conn);
+        
+        if (!pixmapID) {
+          PANIC ("Could not create the pixmapID, aborting...\n", !pixmapID);
+        }
+
+        cookie = xcb_create_pixmap (conn,
+                                    XCB_COPY_FROM_PARENT,
+                                    pixmapID,
+                                    scr.root,
+                                    32,
+                                    32);
+        if (xcb_request_check (conn, cookie)) {
+          PANIC ("Could not create the pixmap, aborting...\n", xcb_request_check (conn, cookie));
+        }
+
+        xcb_gcontext_t gc = xcb_generate_id (conn);
+        if (!gc) {
+          PANIC ("Could not create the gc, aborting...\n", !gc);
+        }
+
+        cookie = xcb_create_gc (conn,
+                                gc,
+                                pixmapID,
+                                0,
+                                NULL);
+
+        if (xcb_request_check (conn, cookie)) {
+          PANIC ("Could not create the gc, aborting...\n", xcb_request_check (conn, cookie));
+        }
+
+        xcb_image_t * icon = xcb_image_create_native (conn,
+                                                      32, 32,
+                                                      XCB_IMAGE_FORMAT_Z_PIXMAP,
+                                                      XCB_COPY_FROM_PARENT,
+                                                      NULL,
+                                                      32 * 32 * 4,
+                                                      (uint8_t *) (data + 2));
+                                                    
+        if (icon == NULL) {
+          PANIC ("Could not create the image, aborting...\n", icon == NULL);
+        }
+
+        cookie = xcb_image_put (conn, pixmapID, gc, icon, 0, 0, 0);
+        if (xcb_request_check (conn, cookie)) {
+          PANIC ("Could not write the icon on the pixmap, aborting...\n", xcb_request_check (conn, cookie));
+        }
+        
+        cookie = xcb_copy_area (conn, 
+                                pixmapID, 
+                                taskID, 
+                                gc, 
+                                0, 0, 
+                                x_offset, 
+                                scr.height_in_pixels - 36, 
+                                32, 32);
+        if (xcb_request_check (conn, cookie)) {
+          PANIC ("Could not copy the pixmap to the screen, aborting...\n", xcb_request_check (conn, cookie));
+        }
+
+        x_offset += 37;
+        
+        cookie = xcb_free_pixmap (conn, pixmapID);
+        if (xcb_request_check (conn, cookie)) {
+          PANIC ("Could not free the pixmap, aborting...\n", xcb_request_check (conn, cookie));
+        }
+
+        cookie = xcb_free_gc (conn, gc);
+        if (xcb_request_check (conn, cookie)) {
+          PANIC ("Could not free the gc, aborting...\n", xcb_request_check (conn, cookie));
+        }
+      }                  
+    }
+  }
+  if (xcb_flush (conn) <= 0) PANIC ("Could not flush the connection, aborting...\n", xcb_flush (conn) <= 0);
+}

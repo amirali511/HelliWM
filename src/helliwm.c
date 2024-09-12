@@ -143,6 +143,11 @@ main (void)
    						 		bar,
    						 		* screen);
 
+		write_on_task_window (connection,
+													screenID,
+													* screen,
+													task);
+
 		/*
 			Event fetch
 		*/
