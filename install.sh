@@ -46,7 +46,7 @@ while [[ true ]]; do
 		exit;
 	elif [[ $INPUT = a || $INPUT = abort ]]; then
 		printf "${ORANGE}Aborting...${NOCOLOR}\n";
-		printf "${BLUE}Aborted.${NOCOLOR}\n";
+		printf "${BLUE}Abort done.${NOCOLOR}\n";
 		exit;
 	else
 		printf "${YELLOW}Invalid input!${NOCOLOR}\n";
