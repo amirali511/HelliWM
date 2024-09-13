@@ -1,6 +1,6 @@
 project('helliwm', 'c',
         version : '0.4',
-        default_options : ['warning_level=3'])
+        default_options : ['warning_level=everything'])
 
 xcb = dependency('xcb')
 xcb_keysyms = dependency('xcb-keysyms')
