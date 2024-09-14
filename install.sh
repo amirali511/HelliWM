@@ -21,10 +21,10 @@ ${NOCOLOR}";
 
 
 while [[ true ]]; do
-	printf  "${BLUE}What do you want to do?${NOCOLOR} [${GREEN}y${NOCOLOR}, ${RED}n${NOCOLOR}, ${ORANGE}a${NOCOLOR}][${GREEN}install${NOCOLOR}, ${RED}uninstall${NOCOLOR}, ${ORANGE}abort${NOCOLOR}]: "
+	printf  "${BLUE}What do you want to do?${NOCOLOR} [${GREEN}i${NOCOLOR}, ${RED}u${NOCOLOR}, ${ORANGE}a${NOCOLOR}][${GREEN}install${NOCOLOR}, ${RED}uninstall${NOCOLOR}, ${ORANGE}abort${NOCOLOR}]: "
 	read INPUT;
 	printf "\n";
-	if [[ $INPUT = y || $INPUT = install ]]; then
+	if [[ ${INPUT,,} = i || ${INPUT,,} = install ]]; then
 		printf "${GREEN}Installing HelliWM...${NOCOLOR}\n";
 		cd src;
 		python3 Generator.py;
@@ -35,7 +35,7 @@ while [[ true ]]; do
 		sudo ninja -C build install;
 		printf "${BLUE}Install done.${NOCOLOR}\n";
 		exit;
-	elif [[ $INPUT = n || $INPUT = uninstall ]]; then
+	elif [[ ${INPUT,,} = u || ${INPUT,,} = uninstall ]]; then
 		printf "${RED}Uninstalling HelliWM...${NOCOLOR}\n";
 		cd src;
 		sudo ninja -C build uninstall;
@@ -44,7 +44,7 @@ while [[ true ]]; do
 		rm -R build;
 		printf "${BLUE}Uninstall done.${NOCOLOR}\n";
 		exit;
-	elif [[ $INPUT = a || $INPUT = abort ]]; then
+	elif [[ ${INPUT,,} = a || ${INPUT,,} = abort ]]; then
 		printf "${ORANGE}Aborting...${NOCOLOR}\n";
 		printf "${BLUE}Abort done.${NOCOLOR}\n";
 		exit;
