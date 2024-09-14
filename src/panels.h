@@ -243,9 +243,9 @@ create_task_window (xcb_connection_t * conn,
 
 static void
 write_on_task_window (xcb_connection_t * conn,
-                      uint32_t scrID,
-                      xcb_screen_t scr,
-                      uint32_t taskID)
+                      uint32_t           scrID,
+                      xcb_screen_t       scr,
+                      uint32_t           taskID)
 {
   xcb_intern_atom_cookie_t 
   icon_cookie = xcb_intern_atom (conn, 

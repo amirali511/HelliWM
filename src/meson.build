@@ -1,5 +1,5 @@
 project('helliwm', 'c',
-        version : '0.4',
+        version : '0.4.3',
         default_options : ['warning_level=everything'])
 
 xcb = dependency('xcb')

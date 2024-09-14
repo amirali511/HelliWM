@@ -8,7 +8,7 @@
   HHH     HHH   EEEEEEEEE   LLLLLLLLL   LLLLLLLLL   III         WWW  WWW            WWW  WWW         MMM       MMM  MMM      MMM
   HHH     HHH   EEEEEEEEE   LLLLLLLLL   LLLLLLLLL   III          WWWWWW              WWWWWW          MMM        MMMMMM       MMM
 
-	HelliWM version 0.4
+	HelliWM version 0.4.3
 	Created by Amirali Rahmani Vatan Khah
 	https://github.com/amirali511		
 */ 
@@ -22,13 +22,13 @@
 /*
 	Function prototypes
 */
-static void 						hclose_wm ();
-static void							htile (xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar);
-static uint32_t 				hcursor (xcb_connection_t * conn, xcb_screen_t * screen);
-static void 						run (string name);
+static void 						hclose_wm 					();
+static void							htile 							(xcb_connection_t * conn, xcb_screen_t * screen, uint32_t * IDs, int len, uint32_t scr, uint32_t bar);
+static uint32_t 				hcursor 						(xcb_connection_t * conn, xcb_screen_t * screen);
+static void 						run 								(string 						name);
 static void 						hclose_focus_window (xcb_connection_t * conn);
 
-const string helli_wm_version = "0.4";
+const string helli_wm_version = "0.4.3";
 
 /*
 	Main function
@@ -323,7 +323,7 @@ main (void)
 */
 static uint32_t
 hcursor (xcb_connection_t * conn,
-				 xcb_screen_t * screen)
+				 xcb_screen_t * 		screen)
 {
 	/*
 		Create the cursor context and load the cursor
@@ -357,11 +357,11 @@ hclose_wm ()
 */ 
 static void
 htile (xcb_connection_t * conn,
-			 xcb_screen_t * screen,
-			 uint32_t * IDs,
-			 int len, 
-			 uint32_t scr, 
-			 uint32_t bar)
+			 xcb_screen_t * 		screen,
+			 uint32_t * 				IDs,
+			 int 								len, 
+			 uint32_t 					scr, 
+			 uint32_t 					bar)
 {
     /*
         Screen dimensions
@@ -451,10 +451,10 @@ hclose_focus_window (xcb_connection_t * conn)
 	/*
 		Atoms
 	*/
-	xcb_intern_atom_cookie_t protocols_cookie = xcb_intern_atom(conn, 1, 12, "WM_PROTOCOLS");
-  xcb_intern_atom_cookie_t    delete_cookie = xcb_intern_atom(conn, 0, 16, "WM_DELETE_WINDOW");
-	xcb_intern_atom_reply_t * protocols_reply = xcb_intern_atom_reply(conn, protocols_cookie, NULL);
-  xcb_intern_atom_reply_t *    delete_reply = xcb_intern_atom_reply(conn, delete_cookie, NULL);
+	xcb_intern_atom_cookie_t protocols_cookie = xcb_intern_atom				 (conn, 1, 12, "WM_PROTOCOLS");
+  xcb_intern_atom_cookie_t    delete_cookie = xcb_intern_atom 			 (conn, 0, 16, "WM_DELETE_WINDOW");
+	xcb_intern_atom_reply_t * protocols_reply = xcb_intern_atom_reply  (conn, protocols_cookie, NULL);
+  xcb_intern_atom_reply_t *    delete_reply = xcb_intern_atom_reply  (conn, delete_cookie, NULL);
 
 	if (!protocols_reply || !delete_reply) {
 		PANIC ("Could not get xcb atoms to work, aborting... \n", (!protocols_reply || !delete_reply));
