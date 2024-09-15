@@ -17,7 +17,7 @@
 	Includes
 */ 
 #include "def.h"
-#include "panels.h"
+#include "bar.h"
 
 /*
 	Function prototypes
