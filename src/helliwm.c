@@ -155,9 +155,9 @@ main (void)
 													* screen,
 													screenID);
 
-	taskID task = create_task_window (connection,
-																		* screen,
-																		screenID);
+	// taskID task = create_task_window (connection,
+	// 																	* screen,
+	// 																	screenID);
 
 	/*
 		Generic event or the Stem Cell
@@ -176,10 +176,10 @@ main (void)
    						 		bar,
    						 		* screen);
 
-		write_on_task_window (connection,
-													screenID,
-													* screen,
-													task);
+		// write_on_task_window (connection,
+		// 											screenID,
+		// 											* screen,
+		// 											task);
 
 		/*
 			Event fetch
