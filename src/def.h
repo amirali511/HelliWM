@@ -1,7 +1,8 @@
 /*
   Include and define and declare global vars
 */
-
+#ifndef _DEF_H
+#define _DEF_H
 #include <xcb/xcb.h>
 #include <xcb/xproto.h>
 #include <xcb/xcb_cursor.h>
@@ -52,3 +53,4 @@ typedef uint32_t barID;
 	Task window ID type
 */
 typedef uint32_t taskID;
+#endif

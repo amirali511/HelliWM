@@ -13,7 +13,7 @@ parse = custom_target('awk parser',
                       output: 'config.h',
                       command: ['awk', '-f', '../parser.awk', '@INPUT@'],
                       capture: true)
-
+                      
 executable('helliwm',
            'helliwm.c',
            'bar.h',
