@@ -80,3 +80,6 @@ The only point is that you have to write the program names on the first line wit
 
 ## Note about dmenu
 You still can use dmenu as a launcher, but it won't be in the correct form and thus, is not recommended.
+
+## The last note about the code
+Some parts of the code are commented out, meaning that they won't work properly, although you can change them and make them work.
